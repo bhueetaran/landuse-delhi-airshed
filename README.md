@@ -1,163 +1,123 @@
-Delhi Airshed Land-Use Classification using Satellite Imagery
+# Delhi Airshed Land-Use Classification 
 
-This project builds an end-to-end AI pipeline to analyze land-use patterns in the Delhi Airshed using Sentinel-2 satellite imagery and ESA WorldCover land-cover data. The objective is to automatically classify land-use categories such as Built-up, Vegetation, Cropland, Water, and Others using deep learning.
+This project implements an AI pipeline to classify land-use patterns in the **Delhi Airshed region** using **Sentinel-2 satellite imagery** and **ESA WorldCover land-cover data**. The goal is to identify dominant land-use categories such as Built-up areas, Vegetation, Cropland, Water, and Others using deep learning.
 
-The project was developed as part of the SRIP 2026 – AI for Sustainability assignment.
+The project was developed as part of the **SRIP 2026 – AI for Sustainability assignment**.
 
-Project Overview
+---
 
-Rapid urbanization in the Delhi NCR region leads to significant environmental challenges, including pollution and land-use changes. Satellite imagery combined with machine learning can help identify patterns in land use and support environmental monitoring.
+# Project Overview
 
-This project implements a complete workflow including:
+Satellite imagery provides an efficient way to monitor environmental changes and urban expansion. This project combines **geospatial data processing and deep learning** to automatically classify land-use patterns from satellite image patches.
 
-• Spatial filtering of satellite images within the Delhi NCR boundary
-• Extraction of land-cover patches from ESA WorldCover raster data
+The pipeline includes:
+
+• Spatial filtering of satellite images inside the Delhi NCR boundary
+• Land-cover patch extraction from ESA WorldCover raster data
 • Automatic label assignment using dominant land-cover class
-• Training a Convolutional Neural Network (CNN) for classification
-• Evaluation using accuracy, F1-score, and confusion matrix
+• CNN-based classification of land-use categories
+• Evaluation using standard machine learning metrics
 
-Dataset
+---
 
-The project uses multiple geospatial datasets.
+# Dataset
 
-Sentinel-2 Satellite Images
+The project uses the following datasets:
 
-RGB image patches
+### Sentinel-2 Satellite Images
 
-Image size: 128 × 128 pixels
+* RGB image patches
+* Image size: **128 × 128 pixels**
+* Resolution: **10 meters per pixel**
 
-Resolution: 10 meters per pixel
+Each image represents approximately **1.28 km × 1.28 km** of land area.
 
-Each image covers approximately 1.28 km × 1.28 km of land area.
+### ESA WorldCover 2021
 
-ESA WorldCover 2021
+Global land-cover raster dataset used to generate labels for satellite images.
 
-Raster land-cover dataset used to assign labels.
+Resolution: **10 meters**
 
-Resolution: 10 meters
+### Delhi NCR Shapefile
 
-Delhi NCR Shapefile
+Used for spatial filtering and region-based analysis.
 
-Used to filter satellite images within the region of interest.
+---
 
-Methodology
-1. Spatial Filtering
+# Methodology
 
-Satellite image filenames contain center coordinates (latitude and longitude).
-These coordinates are converted into geographic points and filtered to keep only the images located inside the Delhi NCR region.
+## 1. Spatial Filtering
 
-2. Spatial Gridding
+Satellite image center coordinates are converted to geographic points and filtered to retain only those inside the **Delhi NCR region**.
 
-A 60 km × 60 km uniform grid is generated over the Delhi NCR region.
+## 2. Spatial Gridding
 
-The shapefile is converted to the coordinate system:
+A **60 km × 60 km grid** is generated over the region using the coordinate reference system:
 
-EPSG:32644 (UTM Zone 44N)
+```
+EPSG:32644
+```
 
-This allows correct distance-based grid calculations.
+## 3. Land-Cover Patch Extraction
 
-3. Land-Cover Patch Extraction
+For each satellite image, a **128×128 raster patch** is extracted from the ESA WorldCover dataset using its center coordinate.
 
-For every valid satellite image, a 128×128 pixel patch is extracted from the ESA WorldCover raster centered on the image coordinate.
+## 4. Label Assignment
 
-The extraction is performed using Rasterio.
-
-4. Label Assignment
-
-The land-use label is assigned based on the dominant land-cover class inside the extracted raster patch.
+The label for each image is determined using the **dominant land-cover class (mode)** inside the extracted patch.
 
 Example:
 
-Land-Cover Class	Pixel Count
-Built-up (50)	8000
-Cropland (40)	3000
-Tree Cover (10)	512
+| Class           | Pixel Count |
+| --------------- | ----------- |
+| Built-up (50)   | 8000        |
+| Cropland (40)   | 3000        |
+| Tree Cover (10) | 512         |
 
-Assigned label → Built-up
+Final label → **Built-up**
 
-5. Label Simplification
+## 5. Model Training
 
-ESA land-cover classes are mapped to simplified categories:
+A **ResNet18 convolutional neural network** is trained to classify satellite image patches into land-use categories.
 
-ESA Class	Category
-50	Built-up
-10, 20, 30	Vegetation
-40	Cropland
-80	Water
-Others	Other
-6. Dataset Preparation
-
-Each satellite image is paired with its assigned land-use label to build a supervised machine learning dataset.
-
-Example dataset format:
-
-Image	Latitude	Longitude	Label
-img_01.png	28.63	77.21	Built-up
-img_02.png	28.72	77.10	Cropland
-7. Model Training
-
-A ResNet18 Convolutional Neural Network is trained to classify satellite image patches into land-use categories.
-
-The training pipeline includes:
-
-• Image preprocessing
-• Train-test split (60/40)
-• CNN training using PyTorch
-
-8. Evaluation Metrics
+## 6. Evaluation
 
 Model performance is evaluated using:
 
 • Accuracy
-• F1-score
+• F1-Score
 • Confusion Matrix
 
-These metrics measure how well the CNN predicts land-use classes from satellite imagery.
+---
 
-Technologies Used
+# Technologies Used
 
-The project uses the following Python libraries:
+Python
+GeoPandas
+Rasterio
+NumPy
+PyTorch
+Scikit-learn
+Matplotlib
+Shapely
+geemap
 
-• Python
-• GeoPandas
-• Rasterio
-• NumPy
-• PyTorch
-• Scikit-learn
-• Matplotlib
-• Shapely
-• geemap (visualization)
+---
 
-The notebook performs the following steps:
+# Project Structure
 
-Load satellite image patches
-
-Load shapefile and create spatial grid
-
-Filter images inside Delhi NCR
-
-Extract land-cover patches from raster
-
-Assign dominant land-cover labels
-
-Train CNN model
-
-Evaluate classification performance
-
-Project Structure
+```
 SRIP-Delhi-Airshed-LandUse-Classification
 │
 ├── sustainibility.ipynb
 ├── README.md
 ├── requirements.txt
-Results
+```
 
-The trained CNN model successfully learns spatial patterns in satellite imagery and predicts land-use categories for the Delhi Airshed.
+---
 
-Evaluation metrics include:
+# Results
 
-• Accuracy score
-• F1-score
-• Confusion matrix visualization
+The trained CNN model successfully learns spatial patterns from satellite imagery and predicts land-use categories across the Delhi Airshed region.
 
-These results demonstrate the feasibility of using deep learning for automated land-use classification.
+The evaluation metrics demonstrate the effectiveness of combining **remote sensing data and deep learning for land-use classification**.
