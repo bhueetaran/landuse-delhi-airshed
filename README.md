@@ -112,6 +112,7 @@ SRIP-Delhi-Airshed-LandUse-Classification
 ├── sustainibility.py
 ├── README.md
 ├── requirements.txt
+├── visualization
 ```
 
 ---
