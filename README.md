@@ -109,7 +109,7 @@ geemap
 ```
 SRIP-Delhi-Airshed-LandUse-Classification
 │
-├── sustainibility.ipynb
+├── sustainibility.py
 ├── README.md
 ├── requirements.txt
 ```
